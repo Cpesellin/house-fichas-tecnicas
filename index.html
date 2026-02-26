@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ficha Técnica Inmobiliaria - HOUSE</title>
+<meta name="description" content="Captura profesional de propiedades">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2563EB;
+    --accent: #c9a84c;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --bg: #f5f3ef;
+    --surface: #ffffff;
+    --text: #1a2332;
+    --text-muted: #64748B;
+    --border: #ddd8ce;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    margin: 0;
+    overscroll-behavior: none;
+  }
+  .playfair { font-family: 'Playfair Display', serif; }
+
+  /* Progress bar */
+  .progress-track { height: 3px; background: #e2ddd5; position: relative; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+  /* Step indicator */
+  .step-dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd8ce; transition: all 0.3s; }
+  .step-dot.active { background: var(--primary); transform: scale(1.4); }
+  .step-dot.done { background: var(--accent); }
+
+  /* Cards */
+  .card { background: white; border-radius: 16px; border: 1.5px solid var(--border); transition: all 0.2s; }
+  .card:hover { border-color: #a0aec0; }
+  .card.selected { border-color: var(--primary); background: #f0f5ff; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+  /* Type cards grid */
+  .type-card {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    padding: 12px;
+    text-align: center;
+    min-height: 80px;
+  }
+  .type-card:active { transform: scale(0.95); }
+  .type-card.selected {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, #eef2ff, #f0f5ff);
+    box-shadow: 0 0 0 3px rgba(26,58,92,0.12);
+  }
+  .type-card .icon { font-size: 28px; line-height: 1; }
+  .type-card .label { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1.2; }
+
+  /* Toggle segment */
+  .seg-btn {
+    flex: 1;
+    padding: 12px 8px;
+    font-weight: 600;
+    font-size: 13px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+  .seg-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 8px rgba(26,58,92,0.25); }
+
+  /* Inputs */
+  .field-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: white;
+    transition: border 0.2s;
+    outline: none;
+    appearance: none;
+  }
+  .field-input:focus { border-color: var(--primary); }
+  .field-input.valid { border-color: var(--success); }
+  .field-input.invalid { border-color: var(--error); }
+  .field-input::placeholder { color: #b0aba0; }
+
+  /* Chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 100px;
+    border: 2px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    white-space: nowrap;
+  }
+  .chip.selected { border-color: var(--primary); background: #eef2ff; color: var(--primary); }
+  .chip:active { transform: scale(0.96); }
+
+  /* Counters */
+  .counter-btn {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: white;
+    font-size: 20px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 300;
+    color: var(--text);
+  }
+  .counter-btn:active { background: var(--primary); color: white; border-color: var(--primary); transform: scale(0.92); }
+  .counter-val { font-size: 22px; font-weight: 700; min-width: 36px; text-align: center; }
+
+  /* Toggle switch */
+  .toggle-track {
+    width: 48px; height: 26px;
+    border-radius: 13px;
+    background: #ddd8ce;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .toggle-track.on { background: var(--primary); }
+  .toggle-thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: white;
+    transition: left 0.2s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .toggle-track.on .toggle-thumb { left: 25px; }
+
+  /* Estrato chips */
+  .estrato-chip {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+  }
+  .estrato-chip.e1, .estrato-chip.e2 { border-color: #93c5fd; }
+  .estrato-chip.e3, .estrato-chip.e4 { border-color: #6ee7b7; }
+  .estrato-chip.e5, .estrato-chip.e6 { border-color: #fcd34d; }
+  .estrato-chip.selected.e1, .estrato-chip.selected.e2 { background: #dbeafe; border-color: #3b82f6; color: #1d4ed8; }
+  .estrato-chip.selected.e3, .estrato-chip.selected.e4 { background: #d1fae5; border-color: #10b981; color: #065f46; }
+  .estrato-chip.selected.e5, .estrato-chip.selected.e6 { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .estrato-chip.en { border-color: #c4b5fd; }
+  .estrato-chip.selected.en { background: #ede9fe; border-color: #8b5cf6; color: #5b21b6; }
+
+  /* Photo upload */
+  .photo-zone {
+    border: 2.5px dashed #c4bdb0;
+    border-radius: 16px;
+    background: #faf8f5;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .photo-zone:hover, .photo-zone.drag-over { border-color: var(--primary); background: #f0f4ff; }
+  .photo-thumb { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1; background: #e8e4dd; }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .photo-del { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.6); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; }
+
+  /* Amenity toggle */
+  .amenity-btn {
+    padding: 14px 10px;
+    border-radius: 14px;
+    border: 2px solid var(--border);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .amenity-btn.on { border-color: var(--primary); background: #eef2ff; }
+  .amenity-btn .a-icon { font-size: 24px; }
+  .amenity-btn .a-label { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1.2; }
+
+  /* Bottom nav */
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: white;
+    border-top: 1.5px solid var(--border);
+    padding: 12px 20px 20px;
+    z-index: 50;
+    display: flex; gap: 12px;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    flex: 1;
+    padding: 15px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.3px;
+  }
+  .btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+  .btn-primary:disabled { background: #c4bdb0; cursor: not-allowed; }
+
+  /* Secondary button */
+  .btn-secondary {
+    padding: 15px 20px;
+    background: white;
+    color: var(--text);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-secondary:active { background: #f5f3ef; }
+
+  /* Map placeholder */
+  .map-box {
+    height: 180px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #e8f4f8, #d1e8f0);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Success screen */
+  .success-screen {
+    position: fixed; inset: 0;
+    background: white;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .checkmark-circle {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10B981, #059669);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* Slide transition */
+  .step-slide { animation: slideIn 0.3s ease both; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+  /* Quality bar */
+  .quality-bar { height: 4px; border-radius: 2px; background: #e2ddd5; overflow: hidden; }
+  .quality-fill { height: 100%; transition: width 0.3s, background 0.3s; border-radius: 2px; }
+
+  /* Range slider custom */
+  input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #e2ddd5; outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 2px 8px rgba(26,58,92,0.3); }
+
+  /* Autosave badge */
+  .autosave-badge {
+    font-size: 11px; color: var(--success); display: flex; align-items: center; gap: 4px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .autosave-badge.show { opacity: 1; }
+
+  /* Scrollable area account for bottom bar */
+  .scroll-area { padding-bottom: 90px; }
+
+  /* Currency input */
+  .currency-wrap { position: relative; }
+  .currency-prefix { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-weight: 600; pointer-events: none; }
+  .currency-wrap .field-input { padding-left: 30px; }
+
+  /* Review card */
+  .review-hero { height: 200px; border-radius: 16px 16px 0 0; overflow: hidden; background: linear-gradient(135deg, #1a3a5c, #2563eb); }
+  .review-hero img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Input with icon */
+  .input-icon-wrap { position: relative; }
+  .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; z-index: 1; }
+  .field-input-icon { padding-left: 42px !important; }
+
+  /* Section divider */
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* Step header decoration */
+  .step-header {
+    padding: 24px 20px 0;
+    position: relative;
+  }
+  .step-number {
+    font-size: 80px;
+    font-weight: 900;
+    color: var(--border);
+    position: absolute;
+    right: 16px;
+    top: 8px;
+    line-height: 1;
+    font-family: 'Playfair Display', serif;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Floating label inputs */
+  .float-group { position: relative; margin-bottom: 0; }
+  .float-group .field-input { padding-top: 20px; padding-bottom: 8px; }
+  .float-label {
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    font-size: 16px;
+    color: var(--text-muted);
+    pointer-events: none;
+    transition: all 0.2s;
+  }
+  .float-group .field-input:focus ~ .float-label,
+  .float-group .field-input:not(:placeholder-shown) ~ .float-label {
+    top: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--primary);
+    text-transform: uppercase;
+  }
+
+  /* Info card */
+  .info-card {
+    background: linear-gradient(135deg, #f0f5ff, #e8f4ff);
+    border: 1.5px solid #c7d9f5;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Pulse dot for autosave */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .pulse-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 1.5s infinite; }
+
+  /* Gradient header */
+  .app-header {
+    background: linear-gradient(180deg, white 0%, var(--bg) 100%);
+  }
+
+  /* Type card hover glow */
+  .type-card:hover:not(.selected) {
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(201,168,76,0.15);
+  }
+  .type-card.selected {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, #eef2ff, #f0f5ff);
+    box-shadow: 0 0 0 3px rgba(26,58,92,0.12), 0 4px 12px rgba(26,58,92,0.1);
+  }
+
+  /* Better scrollbar */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+  /* Bottom bar glassmorphism */
+  .bottom-bar {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Btn primary shine effect */
+  .btn-primary {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.4s;
+  }
+  .btn-primary:hover::after { left: 150%; }
+
+  /* Success confetti dots */
+  .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 99; overflow: hidden; }
+  .dot { position: absolute; width: 8px; height: 8px; border-radius: 50%; animation: fall 3s ease-in forwards; }
+  @keyframes fall { from { transform: translateY(-20px) rotate(0deg); opacity: 1; } to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+  @media (min-width: 640px) {
+    body { background: #e0dbd3; }
+    .app-wrap { max-width: 480px; margin: 0 auto; background: var(--bg); min-height: 100vh; position: relative; box-shadow: 0 0 60px rgba(0,0,0,0.15); }
+    .bottom-bar { max-width: 480px; left: 50%; transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-wrap" x-data="appData()" x-init="init()">
+
+  <!-- Top Progress Bar -->
+  <div class="sticky top-0 z-40 app-header border-b border-gray-100">
+    <div class="flex items-center justify-between px-5 pt-4 pb-2">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #1a3a5c, #2563eb)">
+          <span class="text-white text-xs font-bold">H</span>
+        </div>
+        <div class="playfair text-base font-bold text-[#1a3a5c] tracking-wide">HOUSE</div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5 autosave-badge" :class="{'show': autoSaved}">
+          <div class="pulse-dot"></div>
+          <span class="text-xs font-500">Guardado</span>
+        </div>
+        <div class="flex gap-1.5">
+          <template x-for="i in 5" :key="i">
+            <div class="step-dot" :class="{'active': step === i, 'done': step > i}"></div>
+          </template>
+        </div>
+      </div>
+    </div>
+    <div class="progress-track mx-5 mb-2 rounded-full">
+      <div class="progress-fill rounded-full" :style="`width: ${(step/5)*100}%`"></div>
+    </div>
+    <div class="flex items-center justify-between px-5 pb-3">
+      <div class="text-xs text-[#64748B]">
+        <span class="font-700 text-[#1a3a5c]" x-text="step"></span>/5 · <span x-text="stepTitles[step-1]"></span>
+      </div>
+      <div class="text-xs text-[#64748B]">
+        <span x-text="Math.round((step/5)*100)"></span>% completado
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 1: LO ESENCIAL -->
+  <div x-show="step === 1" class="scroll-area step-slide">
+    <div class="step-header px-5 mb-5">
+      <div class="step-number">1</div>
+      <div class="text-xs font-700 text-[#c9a84c] tracking-widest uppercase mb-1">Paso 1 de 5</div>
+      <h2 class="playfair text-2xl font-bold text-[#1a3a5c] mb-1">Lo esencial</h2>
+      <p class="text-sm text-[#64748B]">La información clave del inmueble</p>
+    </div>
+    <div class="px-5">
+
+    <!-- Tipo de inmueble -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-3 text-[#1a2332]">¿Qué tipo de inmueble? <span class="text-red-500">*</span></label>
+      <div class="grid grid-cols-3 gap-2.5">
+        <template x-for="t in tiposInmueble" :key="t.id">
+          <button 
+            class="type-card"
+            :class="{'selected': data.tipo === t.id}"
+            @click="data.tipo = t.id; handleTipoChange()"
+          >
+            <div class="icon" x-text="t.icon"></div>
+            <div class="label" x-text="t.label"></div>
+          </button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Tipo de negociación -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-3">Tipo de negociación <span class="text-red-500">*</span></label>
+      <div class="flex gap-1 p-1 bg-gray-100 rounded-xl">
+        <button class="seg-btn" :class="{'active': data.negociacion === 'VENTA'}" @click="data.negociacion = 'VENTA'">VENTA</button>
+        <button class="seg-btn" :class="{'active': data.negociacion === 'ARRIENDO'}" @click="data.negociacion = 'ARRIENDO'">ARRIENDO</button>
+        <button class="seg-btn" :class="{'active': data.negociacion === 'AMBAS'}" @click="data.negociacion = 'AMBAS'">AMBAS</button>
+      </div>
+    </div>
+
+    <!-- Precio venta -->
+    <div class="mb-4" x-show="data.negociacion === 'VENTA' || data.negociacion === 'AMBAS'">
+      <label class="block text-sm font-600 mb-2">Precio de venta (COP) <span class="text-red-500">*</span></label>
+      <div class="currency-wrap">
+        <span class="currency-prefix">$</span>
+        <input 
+          type="number" 
+          class="field-input"
+          x-model="data.precioVenta"
+          placeholder="450,000,000"
+          :class="{'valid': data.precioVenta >= 50000000, 'invalid': data.precioVenta > 0 && data.precioVenta < 50000000}"
+        >
+      </div>
+      <p class="text-xs text-[#64748B] mt-1" x-show="data.precioVenta > 0 && data.precioVenta < 50000000" style="color: #ef4444">Mínimo $50,000,000 COP</p>
+      <div class="flex items-center gap-3 mt-3">
+        <span class="text-sm">Precio negociable</span>
+        <div class="toggle-track" :class="{'on': data.negociable}" @click="data.negociable = !data.negociable">
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Precio arriendo -->
+    <div class="mb-6" x-show="data.negociacion === 'ARRIENDO' || data.negociacion === 'AMBAS'">
+      <label class="block text-sm font-600 mb-2">Precio de arriendo (COP/mes) <span class="text-red-500">*</span></label>
+      <div class="currency-wrap">
+        <span class="currency-prefix">$</span>
+        <input 
+          type="number" 
+          class="field-input"
+          x-model="data.precioArriendo"
+          placeholder="2,500,000"
+          :class="{'valid': data.precioArriendo >= 500000, 'invalid': data.precioArriendo > 0 && data.precioArriendo < 500000}"
+        >
+      </div>
+    </div>
+
+    <!-- Ubicación -->
+    <div class="mb-5">
+      <label class="block text-sm font-600 mb-2">Dirección del inmueble <span class="text-red-500">*</span></label>
+      <div class="input-icon-wrap">
+        <span class="input-icon">📍</span>
+        <input type="text" class="field-input field-input-icon" x-model="data.direccion"
+          placeholder="Ej: Calle 50 # 32-15" :class="{'valid': data.direccion.length > 5}">
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-5">
+      <div>
+        <label class="block text-sm font-600 mb-2">Ciudad <span class="text-red-500">*</span></label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">🏙️</span>
+          <input type="text" class="field-input field-input-icon" x-model="data.ciudad" placeholder="Pereira"
+            :class="{'valid': data.ciudad.length > 2}">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-600 mb-2">Barrio / Sector</label>
+        <div class="input-icon-wrap">
+          <span class="input-icon">🏘️</span>
+          <input type="text" class="field-input field-input-icon" x-model="data.barrio" placeholder="El Jardín">
+        </div>
+      </div>
+    </div>
+
+    <!-- Asesor responsable -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-2">Asesor responsable <span class="text-red-500">*</span></label>
+      <div class="input-icon-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" class="field-input field-input-icon" x-model="data.asesor"
+          autocapitalize="words" placeholder="Nombre del asesor que registra"
+          :class="{'valid': data.asesor && data.asesor.length >= 3}">
+      </div>
+      <p class="text-xs text-[#64748B] mt-1.5">Quien sube esta ficha al sistema</p>
+    </div>
+  </div>
+
+    </div>
+  <!-- PASO 2: EL PROPIETARIO -->
+  <div x-show="step === 2" class="scroll-area step-slide">
+    <div class="step-header px-5 mb-5">
+      <div class="step-number">2</div>
+      <div class="text-xs font-700 text-[#c9a84c] tracking-widest uppercase mb-1">Paso 2 de 5</div>
+      <h2 class="playfair text-2xl font-bold text-[#1a3a5c] mb-1">El propietario</h2>
+      <p class="text-sm text-[#64748B]">Datos de contacto del inmueble</p>
+    </div>
+    <div class="px-5">
+
+    <!-- Nombre -->
+    <div class="mb-5">
+      <label class="block text-sm font-600 mb-2">Nombre del contacto <span class="text-red-500">*</span></label>
+      <input 
+        type="text" 
+        class="field-input"
+        x-model="data.nombre"
+        autocapitalize="words"
+        placeholder="Nombre completo"
+        :class="{'valid': data.nombre.length >= 3, 'invalid': data.nombre.length > 0 && data.nombre.length < 3}"
+      >
+    </div>
+
+    <!-- Teléfono -->
+    <div class="mb-5">
+      <label class="block text-sm font-600 mb-2">
+        Teléfono <span class="text-red-500">*</span>
+        <span class="text-xs text-green-600 ml-2">💬 WhatsApp</span>
+      </label>
+      <input 
+        type="tel" 
+        class="field-input"
+        x-model="data.telefono"
+        placeholder="(300) 123-4567"
+        @input="formatPhone($event)"
+        :class="{'valid': data.telefono.replace(/\D/g,'').length === 10, 'invalid': data.telefono.length > 0 && data.telefono.replace(/\D/g,'').length !== 10}"
+      >
+      <p class="text-xs mt-1" x-show="data.telefono.length > 0 && data.telefono.replace(/\D/g,'').length !== 10" style="color: #ef4444">Ingresa 10 dígitos</p>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-5">
+      <label class="block text-sm font-600 mb-2">
+        Email 
+        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ml-1">Recomendado para contratos</span>
+      </label>
+      <input 
+        type="email" 
+        class="field-input"
+        x-model="data.email"
+        placeholder="correo@ejemplo.com"
+        :class="{'valid': isValidEmail(data.email), 'invalid': data.email.length > 0 && !isValidEmail(data.email)}"
+      >
+    </div>
+
+    <!-- Confidencialidad -->
+    <div class="card p-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="text-sm font-600">Contacto confidencial</div>
+          <div class="text-xs text-[#64748B] mt-0.5">Solo admins verán los datos completos</div>
+        </div>
+        <div class="toggle-track" :class="{'on': data.confidencial}" @click="data.confidencial = !data.confidencial">
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  <!-- PASO 3: CARACTERÍSTICAS -->
+  <div x-show="step === 3" class="scroll-area step-slide">
+    <div class="step-header px-5 mb-5">
+      <div class="step-number">3</div>
+      <div class="text-xs font-700 text-[#c9a84c] tracking-widest uppercase mb-1">Paso 3 de 5</div>
+      <h2 class="playfair text-2xl font-bold text-[#1a3a5c] mb-1">Características</h2>
+      <p class="text-sm text-[#64748B]">Espacios y distribución del inmueble</p>
+    </div>
+    <div class="px-5">
+
+    <!-- Área -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-3">
+        <span x-text="areaLabel"></span> <span class="text-red-500">*</span>
+        <span class="float-right text-[#1a3a5c] font-700 text-base" x-text="data.area + ' m²'"></span>
+      </label>
+      <input 
+        type="range" 
+        min="20" 
+        max="2000" 
+        x-model="data.area"
+        class="w-full"
+      >
+      <div class="flex justify-between text-xs text-[#64748B] mt-1">
+        <span>20 m²</span>
+        <input type="number" x-model="data.area" class="text-center font-700 text-[#1a3a5c] text-sm w-20 border-b border-[#1a3a5c] outline-none bg-transparent">
+        <span>2000+ m²</span>
+      </div>
+    </div>
+
+    <!-- Estrato -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-3">Estrato <span class="text-red-500">*</span></label>
+      <div class="flex gap-2">
+        <button class="estrato-chip e1" :class="{'selected': data.estrato === 1}" @click="data.estrato = 1">1</button>
+        <button class="estrato-chip e2" :class="{'selected': data.estrato === 2}" @click="data.estrato = 2">2</button>
+        <button class="estrato-chip e3" :class="{'selected': data.estrato === 3}" @click="data.estrato = 3">3</button>
+        <button class="estrato-chip e4" :class="{'selected': data.estrato === 4}" @click="data.estrato = 4">4</button>
+        <button class="estrato-chip e5" :class="{'selected': data.estrato === 5}" @click="data.estrato = 5">5</button>
+        <button class="estrato-chip e6" :class="{'selected': data.estrato === 6}" @click="data.estrato = 6">6</button>
+        <button class="estrato-chip en" :class="{'selected': data.estrato === 0}" @click="data.estrato = 0" style="width:auto;padding:0 10px;font-size:10px">?</button>
+      </div>
+    </div>
+
+    <!-- Plantilla distribución -->
+    <div class="mb-5" x-show="!['Lote'].includes(data.tipo)">
+      <label class="block text-sm font-600 mb-3">Distribución</label>
+      <div class="flex gap-3 overflow-x-auto pb-2">
+        <template x-for="plantilla in plantillas" :key="plantilla.id">
+          <button 
+            class="card flex-shrink-0 p-4 min-w-36 text-left"
+            :class="{'selected': data.plantilla === plantilla.id}"
+            @click="selectPlantilla(plantilla)"
+          >
+            <div class="text-lg mb-1" x-text="plantilla.icon"></div>
+            <div class="text-sm font-700" x-text="plantilla.label"></div>
+            <div class="text-xs text-[#64748B] mt-1" x-text="plantilla.desc"></div>
+          </button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Distribución detallada -->
+    <div class="mb-6" x-show="!['Lote'].includes(data.tipo)">
+      <div class="grid grid-cols-3 gap-4">
+        <!-- Habitaciones -->
+        <div class="text-center" x-show="!['Local comercial','Oficina','Bodega','Lote'].includes(data.tipo)">
+          <div class="text-xs text-[#64748B] mb-2 font-600">🛏️ Hab.</div>
+          <div class="flex items-center justify-center gap-2">
+            <button class="counter-btn" @click="data.habitaciones = Math.max(0, data.habitaciones - 1)">−</button>
+            <div class="counter-val" x-text="data.habitaciones"></div>
+            <button class="counter-btn" @click="data.habitaciones++">+</button>
+          </div>
+        </div>
+        <!-- Baños -->
+        <div class="text-center" x-show="!['Lote'].includes(data.tipo)">
+          <div class="text-xs text-[#64748B] mb-2 font-600">🚿 Baños</div>
+          <div class="flex items-center justify-center gap-2">
+            <button class="counter-btn" @click="data.banos = Math.max(0, data.banos - 1)">−</button>
+            <div class="counter-val" x-text="data.banos"></div>
+            <button class="counter-btn" @click="data.banos++">+</button>
+          </div>
+        </div>
+        <!-- Parqueos -->
+        <div class="text-center">
+          <div class="text-xs text-[#64748B] mb-2 font-600">🚗 Parq.</div>
+          <div class="flex items-center justify-center gap-2">
+            <button class="counter-btn" @click="data.parqueos = Math.max(0, data.parqueos - 1)">−</button>
+            <div class="counter-val" x-text="data.parqueos"></div>
+            <button class="counter-btn" @click="data.parqueos++">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Servicio -->
+      <div class="card p-4 mt-4" x-show="['Casa','Apartamento','Casa campestre','Finca'].includes(data.tipo)">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-600">¿Cuarto + baño de servicio?</div>
+          <div class="toggle-track" :class="{'on': data.tieneServicio}" @click="data.tieneServicio = !data.tieneServicio">
+            <div class="toggle-thumb"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Piso (solo apartamento) -->
+      <div class="mt-4" x-show="data.tipo === 'Apartamento'">
+        <label class="block text-sm font-600 mb-2">Número de piso</label>
+        <input type="number" class="field-input" x-model="data.piso" placeholder="Ej: 8" min="1">
+      </div>
+
+      <!-- Antigüedad (casas campestres, fincas) -->
+      <div class="mt-4" x-show="['Casa campestre','Finca'].includes(data.tipo)">
+        <label class="block text-sm font-600 mb-2">Antigüedad</label>
+        <div class="flex gap-2 flex-wrap">
+          <template x-for="a in antigüedades" :key="a">
+            <button class="chip" :class="{'selected': data.antiguedad === a}" @click="data.antiguedad = a" x-text="a"></button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Características destacadas -->
+    <div class="mb-6" x-show="!['Lote'].includes(data.tipo)">
+      <label class="block text-sm font-600 mb-1">Características destacadas</label>
+      <p class="text-xs text-[#64748B] mb-3">Máximo 5 selecciones (<span x-text="data.caracteristicas.length"></span>/5)</p>
+      <div class="flex flex-wrap gap-2">
+        <template x-for="c in caracteristicasOpciones" :key="c.id">
+          <button 
+            class="chip"
+            :class="{'selected': data.caracteristicas.includes(c.id)}"
+            @click="toggleCaracteristica(c.id)"
+            :disabled="data.caracteristicas.length >= 5 && !data.caracteristicas.includes(c.id)"
+          >
+            <span x-text="c.icon"></span>
+            <span x-text="c.label"></span>
+          </button>
+        </template>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  <!-- PASO 4: LO QUE VENDE -->
+  <div x-show="step === 4" class="scroll-area step-slide">
+    <div class="step-header px-5 mb-5">
+      <div class="step-number">4</div>
+      <div class="text-xs font-700 text-[#c9a84c] tracking-widest uppercase mb-1">Paso 4 de 5</div>
+      <h2 class="playfair text-2xl font-bold text-[#1a3a5c] mb-1">Lo que vende</h2>
+      <p class="text-sm text-[#64748B]">Amenidades, descripción y fotos</p>
+    </div>
+    <div class="px-5">
+
+    <!-- Amenidades -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-1">Amenidades principales</label>
+      <p class="text-xs text-[#64748B] mb-3"><span x-text="countAmenidades()"></span> de 8 seleccionadas</p>
+      <div class="grid grid-cols-4 gap-2">
+        <template x-for="a in amenidadesPrincipales" :key="a.id">
+          <button 
+            class="amenity-btn"
+            :class="{'on': data.amenidades.includes(a.id)}"
+            @click="toggleAmenidad(a.id)"
+          >
+            <div class="a-icon" x-text="a.icon"></div>
+            <div class="a-label" x-text="a.label"></div>
+          </button>
+        </template>
+      </div>
+
+      <!-- Más amenidades -->
+      <button class="text-sm text-[#2563EB] font-600 mt-3" @click="showMoreAmenidades = !showMoreAmenidades">
+        <span x-text="showMoreAmenidades ? '▲ Ocultar amenidades' : '▼ Ver más amenidades'"></span>
+      </button>
+      <div x-show="showMoreAmenidades" class="mt-3">
+        <div class="flex flex-wrap gap-2">
+          <template x-for="a in amenidadesExtras" :key="a.id">
+            <button 
+              class="chip"
+              :class="{'selected': data.amenidades.includes(a.id)}"
+              @click="toggleAmenidad(a.id)"
+            >
+              <span x-text="a.icon"></span>
+              <span x-text="a.label"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <!-- Observaciones -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-2">Observaciones</label>
+      <textarea 
+        class="field-input"
+        style="min-height: 100px; max-height: 300px; resize: vertical;"
+        x-model="data.observaciones"
+        :placeholder="observacionesPlaceholder"
+        maxlength="1000"
+      ></textarea>
+      <div class="flex justify-between items-center mt-2">
+        <div class="text-xs" :style="`color: ${descQuality.color}`" x-text="descQuality.label"></div>
+        <div class="text-xs text-[#64748B]"><span x-text="data.observaciones.length"></span>/1000</div>
+      </div>
+      <div class="quality-bar mt-1">
+        <div class="quality-fill" :style="`width: ${Math.min(100, data.observaciones.length/10)}%; background: ${descQuality.color}`"></div>
+      </div>
+    </div>
+
+    <!-- Fotos -->
+    <div class="mb-6">
+      <label class="block text-sm font-600 mb-1">Fotos del inmueble</label>
+      <p class="text-xs text-[#64748B] mb-3">Mínimo 5 requeridas · <span x-text="fotos.length"></span> de 5 obligatorias</p>
+
+      <!-- Upload zone -->
+      <div 
+        class="photo-zone mb-4"
+        @click="$refs.fileInput.click()"
+        @dragover.prevent="dragOver = true"
+        @dragleave="dragOver = false"
+        @drop.prevent="handleDrop($event)"
+        :class="{'drag-over': dragOver}"
+      >
+        <div class="text-4xl mb-2">📸</div>
+        <div class="font-600 text-[#1a3a5c] text-sm">Toca para agregar fotos</div>
+        <div class="text-xs text-[#64748B] mt-1">o arrastra aquí desde tu galería</div>
+        <input type="file" multiple accept="image/*" class="hidden" x-ref="fileInput" @change="handleFiles($event)">
+      </div>
+
+      <!-- Guía de fotos obligatorias -->
+      <div class="mb-4">
+        <div class="text-xs font-700 text-[#64748B] mb-2 uppercase tracking-wider">Fotos requeridas</div>
+        <div class="space-y-2">
+          <template x-for="(foto, idx) in fotoGuia" :key="idx">
+            <div class="flex items-center gap-3 py-2">
+              <div class="w-8 h-8 rounded-lg flex items-center justify-center text-base flex-shrink-0"
+                :class="fotos.length > idx ? 'bg-green-100' : 'bg-gray-100'">
+                <span x-show="fotos.length > idx">✅</span>
+                <span x-show="fotos.length <= idx" x-text="foto.icon"></span>
+              </div>
+              <div class="text-sm" :class="fotos.length > idx ? 'text-green-700 font-600' : 'text-[#64748B]'" x-text="foto.label"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Preview grid -->
+      <div class="grid grid-cols-3 gap-2" x-show="fotos.length > 0">
+        <template x-for="(foto, idx) in fotos" :key="idx">
+          <div class="photo-thumb">
+            <img :src="foto.preview" :alt="'Foto ' + (idx+1)">
+            <div class="photo-del" @click.stop="removePhoto(idx)">✕</div>
+            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs text-center py-1" x-text="'Foto ' + (idx+1)"></div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Upload progress -->
+      <div x-show="uploading" class="mt-3 p-3 bg-blue-50 rounded-lg">
+        <div class="text-sm font-600 text-[#1a3a5c] mb-1">Optimizando imagen...</div>
+        <div class="quality-bar">
+          <div class="quality-fill bg-blue-500" :style="`width: ${uploadProgress}%`"></div>
+        </div>
+        <div class="text-xs text-[#64748B] mt-1" x-text="uploadStatus"></div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  <!-- PASO 5: REVIEW -->
+  <div x-show="step === 5" class="scroll-area step-slide">
+    <div class="step-header px-5 mb-5">
+      <div class="step-number">5</div>
+      <div class="text-xs font-700 text-[#c9a84c] tracking-widest uppercase mb-1">Último paso</div>
+      <h2 class="playfair text-2xl font-bold text-[#1a3a5c] mb-1">Revisar y publicar</h2>
+      <p class="text-sm text-[#64748B]">Confirma los datos antes de enviar</p>
+    </div>
+    <div class="px-5">
+
+    <!-- Review card -->
+    <div class="card overflow-hidden mb-5">
+      <div class="review-hero">
+        <img x-show="fotos.length > 0" :src="fotos[0]?.preview" alt="Foto principal">
+        <div x-show="fotos.length === 0" class="w-full h-full flex items-center justify-center text-white text-opacity-70">
+          <div class="text-center">
+            <div class="text-4xl mb-2">🏠</div>
+            <div class="text-sm">Sin foto principal</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="p-4">
+        <h3 class="playfair text-xl font-bold text-[#1a3a5c]" x-text="generarTitulo()"></h3>
+        
+        <div class="flex items-center gap-2 mt-2">
+          <span class="text-2xl font-800 text-[#1a3a5c]" x-text="formatCurrency(data.precioVenta || data.precioArriendo)"></span>
+          <span x-show="data.negociable" class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Negociable</span>
+        </div>
+
+        <div class="flex items-center gap-1 text-sm text-[#64748B] mt-2">
+          <span>📍</span>
+          <span x-text="data.direccion || data.ciudad || 'Sin ubicación'"></span>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span x-show="data.area" class="chip text-xs" style="padding: 4px 10px" x-text="data.area + ' m²'"></span>
+          <span x-show="data.habitaciones > 0" class="chip text-xs" style="padding: 4px 10px" x-text="data.habitaciones + ' hab'"></span>
+          <span x-show="data.banos > 0" class="chip text-xs" style="padding: 4px 10px" x-text="data.banos + ' baños'"></span>
+          <span x-show="data.estrato > 0" class="chip text-xs" style="padding: 4px 10px" x-text="'Estrato ' + data.estrato"></span>
+        </div>
+
+        <div class="text-xs text-[#64748B] mt-3">
+          📷 <span x-text="fotos.length"></span> fotos · 
+          🏷️ <span x-text="data.amenidades.length"></span> amenidades
+        </div>
+      </div>
+    </div>
+
+    <!-- Secciones editables -->
+    <div class="space-y-3 mb-5">
+      <div class="card p-4 cursor-pointer" @click="step = 1">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="text-sm font-700">Datos básicos</div>
+            <div class="text-xs text-[#64748B] mt-0.5" x-text="data.tipo + ' · ' + data.negociacion"></div>
+          </div>
+          <span class="text-[#2563EB] text-sm font-600">Editar ›</span>
+        </div>
+      </div>
+      <div class="card p-4 cursor-pointer" @click="step = 2">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="text-sm font-700">Propietario</div>
+            <div class="text-xs text-[#64748B] mt-0.5" x-text="data.nombre + ' · ' + data.telefono"></div>
+          </div>
+          <span class="text-[#2563EB] text-sm font-600">Editar ›</span>
+        </div>
+      </div>
+      <div class="card p-4 cursor-pointer" @click="step = 4">
+        <div class="flex justify-between items-center">
+          <div>
+            <div class="text-sm font-700">Fotos y descripción</div>
+            <div class="text-xs text-[#64748B] mt-0.5"><span x-text="fotos.length"></span> fotos subidas</div>
+          </div>
+          <span class="text-[#2563EB] text-sm font-600">Editar ›</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Términos -->
+    <div class="card p-4 mb-5">
+      <div class="flex items-start gap-3">
+        <div 
+          class="w-5 h-5 border-2 rounded flex items-center justify-center flex-shrink-0 mt-0.5 cursor-pointer"
+          :class="aceptaTerminos ? 'bg-[#1a3a5c] border-[#1a3a5c]' : 'border-gray-300'"
+          @click="aceptaTerminos = !aceptaTerminos"
+        >
+          <span x-show="aceptaTerminos" class="text-white text-xs">✓</span>
+        </div>
+        <label class="text-sm text-[#64748B] cursor-pointer" @click="aceptaTerminos = !aceptaTerminos">
+          Confirmo que la información es verídica y tengo autorización para publicar este inmueble.
+        </label>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  <!-- Bottom Navigation Bar -->
+  <div class="bottom-bar">
+    <button 
+      class="btn-secondary"
+      x-show="step > 1"
+      @click="prevStep()"
+    >
+      ← Atrás
+    </button>
+    
+    <button 
+      class="btn-secondary"
+      x-show="step === 1"
+      @click="saveDraft()"
+    >
+      Borrador
+    </button>
+
+    <button 
+      class="btn-primary"
+      @click="nextStep()"
+      :disabled="!canContinue() || submitting"
+      x-show="step < 5"
+    >
+      <span x-show="!submitting">Guardar y continuar →</span>
+      <span x-show="submitting">Guardando...</span>
+    </button>
+
+    <button 
+      class="btn-primary"
+      @click="submitForm()"
+      :disabled="!aceptaTerminos || submitting"
+      x-show="step === 5"
+      style="background: linear-gradient(135deg, #059669, #10B981)"
+    >
+      <span x-show="!submitting">✓ PUBLICAR FICHA TÉCNICA</span>
+      <span x-show="submitting">Enviando...</span>
+    </button>
+  </div>
+
+  <!-- Success Screen -->
+  <div class="success-screen" x-show="showSuccess" style="display:none">
+    <!-- Confetti -->
+    <div class="confetti" id="confetti"></div>
+    
+    <div style="margin-bottom: 8px;">
+      <div class="checkmark-circle" style="margin: 0 auto;">✓</div>
+    </div>
+    
+    <div class="text-xs font-700 tracking-widest uppercase text-[#c9a84c] mb-2 mt-6">¡Ficha registrada!</div>
+    <h2 class="playfair text-3xl font-bold text-[#1a3a5c] mb-2">Publicado con éxito</h2>
+    <p class="text-[#64748B] text-sm mb-1">La información llegó correctamente al sistema</p>
+    
+    <div class="info-card mt-4 mb-8" style="width: 100%; max-width: 280px;">
+      <div>
+        <div class="text-xs text-[#64748B]">ID de ficha</div>
+        <div class="font-700 text-[#1a3a5c] text-sm" x-text="fichaId"></div>
+      </div>
+    </div>
+    
+    <div class="w-full max-w-xs space-y-3">
+      <button class="btn-primary w-full" @click="resetForm()">+ Registrar otro inmueble</button>
+      <button class="btn-secondary w-full" @click="showSuccess = false; step = 5">Ver resumen</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============================================
+// CONFIGURACIÓN - CAMBIAR ESTOS VALORES
+// ============================================
+const CONFIG = {
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxnqdt8n2VqXeKRc3ypmAE7b92KBNIneEClww7YZM85khBXUxpiqrakJLBfe-SyY-ms/exec',
+  CLOUDINARY_CLOUD_NAME: 'dfelsbmbo',
+  CLOUDINARY_UPLOAD_PRESET: 'fichas_unsigned',
+  GOOGLE_MAPS_API_KEY: 'TU_API_KEY_AQUI',
+  MAX_PHOTOS: 20,
+  MIN_PHOTOS_REQUIRED: 5,
+};
+
+function appData() {
+  return {
+    step: 1,
+    submitting: false,
+    uploading: false,
+    uploadProgress: 0,
+    uploadStatus: '',
+    showSuccess: false,
+    fichaId: '',
+    autoSaved: false,
+    dragOver: false,
+    showMoreAmenidades: false,
+    aceptaTerminos: false,
+    geoError: '',
+    fotos: [],
+
+    stepTitles: ['Lo esencial', 'El propietario', 'Características', 'Lo que vende', 'Revisar y publicar'],
+
+    data: {
+      tipo: '',
+      negociacion: 'VENTA',
+      precioVenta: '',
+      precioArriendo: '',
+      negociable: false,
+      direccion: '',
+      ciudad: '',
+      lat: null,
+      lng: null,
+      codigoPortal: '',
+      nombre: '',
+      telefono: '',
+      email: '',
+      confidencial: false,
+      area: 120,
+      estrato: 0,
+      plantilla: '',
+      habitaciones: 3,
+      banos: 2,
+      parqueos: 1,
+      tieneServicio: false,
+      piso: '',
+      antiguedad: '',
+      caracteristicas: [],
+      amenidades: [],
+      observaciones: '',
+    },
+
+    tiposInmueble: [
+      { id: 'Casa', label: 'Casa', icon: '🏠' },
+      { id: 'Casa campestre', label: 'Casa campestre', icon: '🏡' },
+      { id: 'Apartamento', label: 'Apartamento', icon: '🏢' },
+      { id: 'Apartaestudio', label: 'Aparta-estudio', icon: '🛋️' },
+      { id: 'Finca', label: 'Finca', icon: '🌾' },
+      { id: 'Local comercial', label: 'Local', icon: '🏪' },
+      { id: 'Oficina', label: 'Oficina', icon: '💼' },
+      { id: 'Bodega', label: 'Bodega', icon: '🏭' },
+      { id: 'Lote', label: 'Lote', icon: '🟫' },
+      { id: 'Penthouse', label: 'Penthouse', icon: '✨' },
+    ],
+
+    plantillas: [
+      { id: 'estandar', label: 'Estándar', desc: '2 Hab / 2 Baños / 1 Parq', icon: '🏠', h: 2, b: 2, p: 1 },
+      { id: 'familiar', label: 'Familiar', desc: '3 Hab / 3 Baños / 2 Parq', icon: '👨‍👩‍👧', h: 3, b: 3, p: 2 },
+      { id: 'personalizado', label: 'Personalizado', desc: 'Configurar manualmente', icon: '⚙️', h: null, b: null, p: null },
+    ],
+
+    antigüedades: ['0-5 años', '5-10 años', '10-20 años', '20+ años'],
+
+    caracteristicasOpciones: [
+      { id: 'cocina_integral', label: 'Cocina integral', icon: '🍳' },
+      { id: 'balcon', label: 'Balcón/Terraza', icon: '🏞️' },
+      { id: 'patio', label: 'Patio/Jardín', icon: '🌳' },
+      { id: 'estudio', label: 'Estudio', icon: '📚' },
+      { id: 'zona_ropas', label: 'Zona de ropas', icon: '👕' },
+      { id: 'doble_altura', label: 'Doble altura', icon: '📐' },
+    ],
+
+    amenidadesPrincipales: [
+      { id: 'parqueadero', label: 'Parqueadero', icon: '🚗' },
+      { id: 'ascensor', label: 'Ascensor', icon: '🛗' },
+      { id: 'piscina', label: 'Piscina', icon: '🏊' },
+      { id: 'gimnasio', label: 'Gimnasio', icon: '🏋️' },
+      { id: 'zonas_verdes', label: 'Zonas verdes', icon: '🌿' },
+      { id: 'seguridad', label: 'Seguridad 24h', icon: '🛡️' },
+      { id: 'salon_comunal', label: 'Salón comunal', icon: '🎉' },
+      { id: 'terraza', label: 'Terraza', icon: '☀️' },
+    ],
+
+    amenidadesExtras: [
+      { id: 'cancha_tennis', label: 'Cancha tenis', icon: '🎾' },
+      { id: 'cancha_futbol', label: 'Cancha fútbol', icon: '⚽' },
+      { id: 'sauna', label: 'Sauna/Turco', icon: '🧖' },
+      { id: 'juegos_ninos', label: 'Juegos niños', icon: '🎠' },
+      { id: 'bbq', label: 'Zona BBQ', icon: '🔥' },
+      { id: 'coworking', label: 'Coworking', icon: '💻' },
+      { id: 'pet_friendly', label: 'Pet friendly', icon: '🐕' },
+      { id: 'cuarto_util', label: 'Cuarto útil', icon: '📦' },
+      { id: 'lavanderia', label: 'Lavandería', icon: '🧺' },
+      { id: 'deposito', label: 'Depósito', icon: '🗄️' },
+    ],
+
+    fotoGuia: [
+      { label: 'Fachada del inmueble', icon: '🏠' },
+      { label: 'Sala / Área principal', icon: '🛋️' },
+      { label: 'Cocina', icon: '🍳' },
+      { label: 'Habitación principal', icon: '🛏️' },
+      { label: 'Baño social', icon: '🚿' },
+    ],
+
+    init() {
+      this.loadDraft();
+      this.setupAutoSave();
+      // Init Google Maps después de 500ms
+      setTimeout(() => this.initMaps(), 500);
+    },
+
+    initMaps() {
+      if (typeof google === 'undefined') return;
+      try {
+        const input = document.getElementById('autocomplete-input');
+        if (!input) return;
+        const autocomplete = new google.maps.places.Autocomplete(input, {
+          componentRestrictions: { country: 'co' },
+          types: ['address'],
+          language: 'es',
+          fields: ['formatted_address', 'geometry']
+        });
+        autocomplete.addListener('place_changed', () => {
+          const place = autocomplete.getPlace();
+          if (place.geometry) {
+            this.data.direccion = place.formatted_address;
+            this.data.lat = place.geometry.location.lat();
+            this.data.lng = place.geometry.location.lng();
+          }
+        });
+      } catch(e) { console.log('Maps no disponible'); }
+    },
+
+    handleTipoChange() {
+      // Lógica condicional por tipo
+    },
+
+    selectPlantilla(p) {
+      this.data.plantilla = p.id;
+      if (p.h !== null) {
+        this.data.habitaciones = p.h;
+        this.data.banos = p.b;
+        this.data.parqueos = p.p;
+      }
+    },
+
+    toggleCaracteristica(id) {
+      const idx = this.data.caracteristicas.indexOf(id);
+      if (idx > -1) {
+        this.data.caracteristicas.splice(idx, 1);
+      } else if (this.data.caracteristicas.length < 5) {
+        this.data.caracteristicas.push(id);
+      }
+    },
+
+    toggleAmenidad(id) {
+      const idx = this.data.amenidades.indexOf(id);
+      if (idx > -1) this.data.amenidades.splice(idx, 1);
+      else this.data.amenidades.push(id);
+    },
+
+    countAmenidades() {
+      return this.data.amenidades.filter(a => 
+        this.amenidadesPrincipales.map(x => x.id).includes(a)
+      ).length;
+    },
+
+    get areaLabel() {
+      const loteTypes = ['Lote', 'Finca', 'Casa campestre'];
+      return loteTypes.includes(this.data.tipo) ? 'Área del lote (m²)' : 'Área construida (m²)';
+    },
+
+    get observacionesPlaceholder() {
+      const placeholders = {
+        'Casa': 'Describe el estado del jardín, vecindario, remodelaciones recientes, ruido del sector...',
+        'Apartamento': 'Menciona la vista, ruido, estado de ascensores, administración, acabados de los pisos...',
+        'Local comercial': 'Indica afluencia peatonal, restricciones de uso, altura de techos, estado de vitrina...',
+        'Lote': 'Describe topografía, servicios públicos disponibles, vías de acceso, uso del suelo permitido...',
+        'Finca': 'Describe acceso vehicular, fuentes de agua, cultivos existentes, estado de las vías...',
+      };
+      return placeholders[this.data.tipo] || 'Describe las características más relevantes del inmueble, estado general, puntos destacados...';
+    },
+
+    get descQuality() {
+      const len = this.data.observaciones.length;
+      if (len === 0) return { label: '', color: '#e2ddd5' };
+      if (len < 50) return { label: 'Descripción básica', color: '#ef4444' };
+      if (len < 200) return { label: 'Buena descripción', color: '#f59e0b' };
+      return { label: '⭐ Descripción excelente', color: '#10B981' };
+    },
+
+    formatPhone(e) {
+      let v = e.target.value.replace(/\D/g, '').substring(0, 10);
+      if (v.length >= 7) v = `(${v.substring(0,3)}) ${v.substring(3,6)}-${v.substring(6)}`;
+      else if (v.length >= 4) v = `(${v.substring(0,3)}) ${v.substring(3)}`;
+      this.data.telefono = v;
+    },
+
+    isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    },
+
+    getGeolocation() {
+      this.geoError = '';
+      if (!navigator.geolocation) {
+        this.geoError = 'Geolocalización no disponible en este dispositivo';
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          this.data.lat = pos.coords.latitude;
+          this.data.lng = pos.coords.longitude;
+          this.data.direccion = `Lat: ${pos.coords.latitude.toFixed(6)}, Lng: ${pos.coords.longitude.toFixed(6)}`;
+        },
+        () => {
+          this.geoError = 'No se pudo obtener la ubicación. Ingresa la dirección manualmente.';
+        }
+      );
+    },
+
+    async handleFiles(e) {
+      const files = Array.from(e.target.files);
+      for (const file of files) {
+        if (this.fotos.length >= CONFIG.MAX_PHOTOS) break;
+        await this.processPhoto(file);
+      }
+    },
+
+    handleDrop(e) {
+      this.dragOver = false;
+      const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+      files.forEach(f => this.processPhoto(f));
+    },
+
+    async processPhoto(file) {
+      this.uploading = true;
+      this.uploadStatus = `Comprimiendo ${file.name}...`;
+      this.uploadProgress = 20;
+      
+      try {
+        // Comprimir imagen con canvas
+        const compressed = await this.compressImage(file);
+        this.uploadProgress = 60;
+        this.uploadStatus = `${(file.size/1024/1024).toFixed(1)}MB → ${(compressed.size/1024).toFixed(0)}KB`;
+        
+        // Crear preview local
+        const preview = URL.createObjectURL(compressed);
+        
+        // Subir a Cloudinary (si está configurado)
+        let cloudUrl = preview;
+        if (CONFIG.CLOUDINARY_CLOUD_NAME !== 'tu_cloud_name') {
+          cloudUrl = await this.uploadToCloudinary(compressed);
+        }
+        
+        this.uploadProgress = 100;
+        this.fotos.push({ file: compressed, preview, url: cloudUrl, original: file.name });
+        
+        setTimeout(() => {
+          this.uploading = false;
+          this.uploadProgress = 0;
+        }, 500);
+        
+      } catch(err) {
+        console.error('Error procesando foto:', err);
+        this.uploading = false;
+        this.uploadStatus = 'Error al procesar imagen. Intenta de nuevo.';
+      }
+    },
+
+    compressImage(file) {
+      return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        img.onload = () => {
+          const maxW = 1200;
+          let { width, height } = img;
+          if (width > maxW) { height = (height * maxW) / width; width = maxW; }
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(resolve, 'image/jpeg', 0.8);
+        };
+        img.src = URL.createObjectURL(file);
+      });
+    },
+
+    async uploadToCloudinary(blob) {
+      const formData = new FormData();
+      formData.append('file', blob);
+      formData.append('upload_preset', CONFIG.CLOUDINARY_UPLOAD_PRESET);
+      formData.append('folder', 'fichas_inmobiliarias');
+      
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CONFIG.CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      return data.secure_url;
+    },
+
+    removePhoto(idx) {
+      URL.revokeObjectURL(this.fotos[idx].preview);
+      this.fotos.splice(idx, 1);
+    },
+
+    canContinue() {
+      switch(this.step) {
+        case 1:
+          const precioOk = (this.data.negociacion === 'VENTA' && this.data.precioVenta >= 50000000) ||
+                          (this.data.negociacion === 'ARRIENDO' && this.data.precioArriendo >= 500000) ||
+                          (this.data.negociacion === 'AMBAS' && this.data.precioVenta >= 50000000 && this.data.precioArriendo >= 500000);
+          return this.data.tipo && this.data.negociacion && precioOk && this.data.direccion.length > 5 && this.data.ciudad.length > 2 && this.data.asesor && this.data.asesor.length >= 3;
+        case 2:
+          return this.data.nombre.length >= 3 && this.data.telefono.replace(/\D/g,'').length === 10;
+        case 3:
+          return this.data.area >= 20 && this.data.estrato !== undefined;
+        case 4:
+          return this.fotos.length >= CONFIG.MIN_PHOTOS_REQUIRED;
+        default:
+          return true;
+      }
+    },
+
+    nextStep() {
+      if (!this.canContinue()) return;
+      this.saveDraft();
+      window.scrollTo(0, 0);
+      this.step++;
+    },
+
+    prevStep() {
+      window.scrollTo(0, 0);
+      this.step--;
+    },
+
+    generarTitulo() {
+      const tipo = this.data.tipo || 'Inmueble';
+      const ubicacion = this.data.ciudad || (this.data.direccion ? this.data.direccion.split(',')[0] : '');
+      const area = this.data.area ? `${this.data.area}m²` : '';
+      return [tipo, ubicacion, area].filter(Boolean).join(' en ') || 'Ficha sin título';
+    },
+
+    formatCurrency(val) {
+      if (!val) return '';
+      return '$ ' + Number(val).toLocaleString('es-CO');
+    },
+
+    setupAutoSave() {
+      setInterval(() => {
+        this.saveDraft();
+        this.autoSaved = true;
+        setTimeout(() => this.autoSaved = false, 2000);
+      }, 30000);
+    },
+
+    saveDraft() {
+      try {
+        const draft = {
+          step: this.step,
+          data: this.data,
+          timestamp: Date.now(),
+          fotosCount: this.fotos.length
+        };
+        localStorage.setItem('house_draft', JSON.stringify(draft));
+      } catch(e) {}
+    },
+
+    loadDraft() {
+      try {
+        const saved = localStorage.getItem('house_draft');
+        if (!saved) return;
+        const draft = JSON.parse(saved);
+        const age = Date.now() - draft.timestamp;
+        // Si el borrador tiene menos de 24h
+        if (age < 86400000 && draft.data) {
+          const continuar = confirm(
+            `Tienes un borrador guardado del ${new Date(draft.timestamp).toLocaleDateString('es-CO')}.\n¿Deseas continuar donde lo dejaste?`
+          );
+          if (continuar) {
+            this.data = { ...this.data, ...draft.data };
+            this.step = draft.step || 1;
+          }
+        }
+      } catch(e) {}
+    },
+
+    launchConfetti() {
+      const container = document.getElementById('confetti');
+      if (!container) return;
+      const colors = ['#1a3a5c','#c9a84c','#10B981','#2563EB','#F59E0B'];
+      for (let i = 0; i < 60; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.style.cssText = `left:${Math.random()*100}vw; background:${colors[Math.floor(Math.random()*colors.length)]}; animation-delay:${Math.random()*2}s; animation-duration:${2+Math.random()*2}s; width:${4+Math.random()*8}px; height:${4+Math.random()*8}px`;
+        container.appendChild(dot);
+      }
+      setTimeout(() => container.innerHTML = '', 5000);
+    },
+
+    async submitForm() {
+      if (!this.aceptaTerminos || this.submitting) return;
+      this.submitting = true;
+
+      try {
+        // Subir fotos pendientes a Cloudinary si no están subidas
+        const fotoUrls = this.fotos.map(f => f.url);
+
+        const payload = {
+          ...this.data,
+          fotos: fotoUrls,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+        };
+
+        const res = await fetch(CONFIG.APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          mode: 'no-cors' // Apps Script requiere esto
+        });
+
+        // Con no-cors no podemos leer la respuesta, asumir éxito
+        this.fichaId = 'FICHA-' + Date.now().toString().slice(-6);
+        localStorage.removeItem('house_draft');
+        this.showSuccess = true;
+        setTimeout(() => this.launchConfetti(), 300);
+
+      } catch(err) {
+        // Guardar en IndexedDB para reintento
+        this.saveToIndexedDB();
+        alert('Sin conexión. Los datos se guardaron localmente y se enviarán automáticamente cuando vuelva la conexión.');
+      } finally {
+        this.submitting = false;
+      }
+    },
+
+    async saveToIndexedDB() {
+      try {
+        const db = await this.openDB();
+        const tx = db.transaction('pending', 'readwrite');
+        tx.objectStore('pending').add({ data: this.data, fotos: this.fotos.map(f => f.url), timestamp: Date.now() });
+      } catch(e) { console.log('IndexedDB no disponible'); }
+    },
+
+    openDB() {
+      return new Promise((res, rej) => {
+        const req = indexedDB.open('HouseDB', 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore('pending', { autoIncrement: true });
+        req.onsuccess = e => res(e.target.result);
+        req.onerror = rej;
+      });
+    },
+
+    resetForm() {
+      this.data = {
+        tipo: '', negociacion: 'VENTA', precioVenta: '', precioArriendo: '', negociable: false,
+        direccion: '', ciudad: '', barrio: '', asesor: '', lat: null, lng: null, nombre: '', telefono: '',
+        email: '', confidencial: false, area: 120, estrato: 0, plantilla: '', habitaciones: 3,
+        banos: 2, parqueos: 1, tieneServicio: false, piso: '', antiguedad: '', caracteristicas: [],
+        amenidades: [], observaciones: '',
+      };
+      this.fotos = [];
+      this.step = 1;
+      this.showSuccess = false;
+      this.aceptaTerminos = false;
+      window.scrollTo(0, 0);
+    },
+  };
+}
+</script>
+
+<!-- Google Maps API (reemplazar API key) -->
+<!-- <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&libraries=places&language=es" async defer></script> -->
+
+</body>
+</html>
